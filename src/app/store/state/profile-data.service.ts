@@ -7,26 +7,26 @@ import { guid } from '@datorama/akita';
 const profiles: Array<Profile> = [
   {
     id: guid(),
-    firstName: 'Snezana',
-    lastName: 'Lalatovic',
+    firstName: 'Petar',
+    lastName: 'Petrovic',
     active: false,
   },
   {
     id: guid(),
-    firstName: 'Snezana',
-    lastName: 'Lalatovic',
+    firstName: 'Milan',
+    lastName: 'Nikolic',
     active: false,
   },
   {
     id: guid(),
-    firstName: 'Snezana',
-    lastName: 'Lalatovic',
+    firstName: 'Ivana',
+    lastName: 'Vukovic',
     active: false,
   },
   {
     id: guid(),
-    firstName: 'Snezana',
-    lastName: 'Lalatovic',
+    firstName: 'Jelena',
+    lastName: 'Savic',
     active: false,
   },
 ];

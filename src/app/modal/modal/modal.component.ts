@@ -1,7 +1,5 @@
-import { Profile } from './../../store/state/profile.model';
-
 import { Component, OnInit, Input, Inject } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
@@ -19,30 +17,22 @@ export class ModalComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) data: any
   ) {
     this.title = data.title;
-
-    console.log(data);
-
     this.profileForm = this.fb.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
     });
   }
 
-  ngOnInit() {
-    // this.form = this.fb.group({
-    //   description: [this.description, []],
-    // });
-  }
+  ngOnInit() {}
+
   save() {
     if (this.profileForm.invalid) {
       return;
     }
     this.dialogRef.close(this.profileForm.value);
-    console.warn(this.profileForm.value);
   }
 
   close() {
     this.dialogRef.close();
   }
-
 }

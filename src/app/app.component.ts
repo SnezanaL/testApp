@@ -3,12 +3,15 @@ import { ProfileStore } from './store/state/profile.store';
 import { ProfileQuery } from './store/state/profile.query';
 import { ProfileService } from './store/state/profile.service';
 import { Profile } from './store/state/profile.model';
-import { Observable, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import { filter, switchMap, take } from 'rxjs/operators';
 import { ModalComponent } from './modal/modal/modal.component';
-import { Component, Inject } from '@angular/core';
-import { MatDialog, MatDialogConfig,MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import * as uuid from 'uuid';
+import { Component } from '@angular/core';
+import {
+  MatDialog,
+  MatDialogConfig,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { guid } from '@datorama/akita';
 
@@ -18,110 +21,75 @@ import { guid } from '@datorama/akita';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-
-  dialogAddUser!: MatDialogRef<ModalComponent>;
-
+  dialogAddUser?: MatDialogRef<ModalComponent>;
   addUserButton: boolean | undefined;
   profile!: Profile;
-
-  public useDefault = false;
-
-  hh: any;
-
-  createProfileSub!: any;
-
-  loading = false;
   profiles: Profile[] = [];
-
   profiles$!: Observable<Profile[]>;
-
   filteredItems: any;
+  loading = false;
 
-  //profiles$: any;
   constructor(
-
     private profileStore: ProfileStore,
     private profileService: ProfileService,
     public profileQuery: ProfileQuery,
     private dialog: MatDialog
-  ) {
-    this.addUserButton = false;
-    //this.profiles$ = this.profileQuery.selectAll()
-  }
+  ) {}
 
   ngOnInit() {
-
-    this.profileQuery.getIsLoading().subscribe(res => this.loading = res);
-    this.profileQuery.getAllUsers().subscribe(res => this.profiles = res);
-    this.profileQuery.getLoaded().pipe(
-      take(1),
-      filter(res => !res),
-      switchMap(() => {
-        this.profileStore.setLoading(true);
-        return this.profileService.getUsers();
-      })
-    ).subscribe(res => {
-      this.profileStore.update(state => {
-        return {
-          profiles: res,
-          isLoaded: true,
-        };
-      });
-      this.profileStore.setLoading(false);
-    }, err => {
-      console.log(err);
-      this.profileStore.setLoading(false);
+    this.addUserButton = false;
+    this.profileQuery.getIsLoading().subscribe((res) => (this.loading = res));
+    this.profileQuery.getAllUsers().subscribe((res) => {
+      this.profiles = res;
     });
-
-
-    // //this.profiles$ = this.profileQuery.selectAll();
-    // //this.getUsers();
-    // this.profileService.getUsers().subscribe();
-    // this.profiles$ = this.profileQuery.selectAll();
-    // //this.profiles = this.profileQuery.selectAll();
-    // this.profileQuery.getAllUsers().subscribe(res => this.profiles = res);
-    // console.log(this.profiles);
-    
-    
+    this.profileQuery.getAllUsers$.subscribe((res) => {
+      this.profiles$ = res;
+    });
+    this.profileQuery
+      .getLoaded()
+      .pipe(
+        take(1),
+        filter((res) => !res),
+        switchMap(() => {
+          this.profileStore.setLoading(true);
+          return this.profileService.getUsers();
+        })
+      )
+      .subscribe(
+        (res) => {
+          this.profileStore.update(() => {
+            return {
+              profiles$: res,
+              profiles: res,
+              isLoaded: true,
+            };
+          });
+          this.profileStore.setLoading(false);
+        },
+        (err) => {
+          console.log(err);
+          this.profileStore.setLoading(false);
+        }
+      );
   }
 
-  
-// Filters all those objects in Person array which has atleast one visible item
-//const result = this.profiles.filter(v => {
-
-
-
-
-  // nullifyFormData() {
-  //   this.profile = ;
-  // }
-
-  // getUsers() {
-  //   this.profileService.getUsers()
-  //   .subscribe({
-  //     next(response) {
-  //       //this.hh = response;
-  //       console.log(response);
-  //     },
-  //     error(err) {
-  //       console.error('Error: ' + err);
-  //     },
-  //     complete() {
-        
-  //       console.log('Completed');
-  //     },
-  //   });
-  // }
-
   isDisableButton() {
-    this.filteredItems = this.profiles.filter(o => o.active);
-    if( this.filteredItems.length === this.profiles.length && this.profiles.length < 5) {
-      //this.addUserButton = true;
+    let activeUsers: any;
+    this.filteredItems = this.profiles$
+      .pipe(map((data) => data.filter((user) => user.active)))
+      .subscribe((res) => {
+        activeUsers = res;
+        return activeUsers;
+      });
+
+    if (
+      activeUsers.length === this.profiles.length &&
+      this.profiles.length < 5
+    ) {
       return true;
     } else {
-      false
+      false;
     }
-    console.log(this.filteredItems);
   }
 
   openDialog(): void {
@@ -134,33 +102,25 @@ export class AppComponent {
       title: 'Add new user',
     };
 
-    //this.dialog.open(ModalComponent, dialogConfig);
-
     this.dialogAddUser = this.dialog.open(ModalComponent, dialogConfig);
 
     this.dialogAddUser.afterClosed().subscribe((result: any) => {
-      if(result === undefined) return;
-      console.log(`Dialog result: ${result}`);
+      if (result === undefined) return;
       this.profile = result;
       const body: Profile = {
         id: guid(),
         firstName: this.profile.firstName,
         lastName: this.profile.lastName,
-        active: false
+        active: false,
       };
-      this.profileStore.update((state: { profiles: any; }) => {
-
+      this.profileStore.update((state: { profiles: any }) => {
         return {
-          profiles: [
-            ...state.profiles,
-            body
-          ]
+          profiles: [...state.profiles, body],
         };
       });
 
       this.addUserButton = this.isDisableButton() || undefined;
     });
-
   }
 
   close(): void {
@@ -170,62 +130,19 @@ export class AppComponent {
   onChange($event: MatSlideToggleChange, id: any) {
     const userId = id;
     const checked = $event.checked;
-    //this.useDefault = $event.checked
-    this.profileStore.update((state: { profiles: any; }) => {
+    this.profileStore.update((state: { profiles: any }) => {
       const profiles = [...state.profiles];
-      const index = profiles.findIndex(t => t.id === id);
+      const index = profiles.findIndex((t) => t.id === userId);
       profiles[index] = {
         ...profiles[index],
-        active: checked
+        active: checked,
       };
       return {
         ...state,
-        profiles
+        profiles,
       };
     });
 
     this.addUserButton = this.isDisableButton() || undefined;
-
-    // this.createProfileSub = 
-    //  this.profileStore.update(userId, entity => { 
-    //   const pr = [...entity.active]
-    //   return {
-    //     config: {
-    //       ...entity,
-    //       active: checked 
-    //     }
-    
-
-    // }});
-    //this.profiles$ = this.profileQuery.getAll();
-    //this.profileQuery.getAllUsers().subscribe(res => this.profiles = res);
-    
-    //const profiles = [...profiles];
-    //this.profileStore.update(state => {
-    //   active: checked
-    // }
-    //)
-    //   const profiles =  [...state.profiles];
-      // // const index = profiles.findIndex(t => t.id === id);
-      // profiles[0] = {
-      //   ...state.profiles[0],
-      //   active: checked
-      // };
-
-      //console.log(profiles);
-    //    return {
-    //      ...state.profiles,
-    //      profiles
-
-    //   }
-    // }
-    //);
-    
-    //this.getUsers();
-    // this.profiles$ = this.profileQuery.selectAll();
-     console.log(this.profiles);
-    // this.profiles = this.profileQuery.getAll();
-     console.log(this.profiles);
-    
-}
+  }
 }

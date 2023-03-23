@@ -4,7 +4,7 @@ import { Profile } from './profile.model';
 
 export interface ProfileState extends EntityState<Profile> {
   profiles: Profile[];
-  isLoaded: boolean,
+  isLoaded: boolean;
 }
 
 export const getInitialState = () => {
@@ -14,14 +14,10 @@ export const getInitialState = () => {
   };
 };
 
-
-
 @Injectable({ providedIn: 'root' })
 @StoreConfig({ name: 'profiles' })
 export class ProfileStore extends EntityStore<ProfileState> {
-
   constructor() {
     super(getInitialState());
   }
-
 }

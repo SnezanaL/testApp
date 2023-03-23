@@ -5,14 +5,11 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule} from '@angular/material/form-field';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-
 @NgModule({
-  declarations: [
-    ModalComponent
-  ],
+  declarations: [ModalComponent],
   imports: [
     CommonModule,
     MatDialogModule,
@@ -21,16 +18,17 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MatInputModule,
     MatFormFieldModule,
     FormsModule,
-    ReactiveFormsModule
-  ], exports: [
+    ReactiveFormsModule,
+  ],
+  exports: [
     MatDialogModule,
     MatButtonModule,
     MatSlideToggleModule,
     MatInputModule,
     MatFormFieldModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   entryComponents: [ModalComponent],
 })
-export class NgMaterialModule { }
+export class NgMaterialModule {}
