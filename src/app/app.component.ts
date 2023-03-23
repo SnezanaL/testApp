@@ -21,7 +21,7 @@ export class AppComponent {
 
   dialogAddUser!: MatDialogRef<ModalComponent>;
 
-  addUserButton!: boolean;
+  addUserButton: boolean | undefined;
   profile!: Profile;
 
   public useDefault = false;
@@ -113,6 +113,17 @@ export class AppComponent {
   //   });
   // }
 
+  isDisableButton() {
+    this.filteredItems = this.profiles.filter(o => o.active);
+    if( this.filteredItems.length === this.profiles.length && this.profiles.length < 5) {
+      //this.addUserButton = true;
+      return true;
+    } else {
+      false
+    }
+    console.log(this.filteredItems);
+  }
+
   openDialog(): void {
     const dialogConfig = new MatDialogConfig();
 
@@ -138,6 +149,7 @@ export class AppComponent {
         active: false
       };
       this.profileStore.update((state: { profiles: any; }) => {
+
         return {
           profiles: [
             ...state.profiles,
@@ -145,7 +157,10 @@ export class AppComponent {
           ]
         };
       });
+
+      this.addUserButton = this.isDisableButton() || undefined;
     });
+
   }
 
   close(): void {
@@ -169,11 +184,8 @@ export class AppComponent {
       };
     });
 
-    this.filteredItems = this.profiles.filter(o => o.active);
-    if( this.filteredItems.length === this.profiles.length) {
-      this.addUserButton = true;
-    }
-    console.log(this.filteredItems)
+    this.addUserButton = this.isDisableButton() || undefined;
+
     // this.createProfileSub = 
     //  this.profileStore.update(userId, entity => { 
     //   const pr = [...entity.active]
