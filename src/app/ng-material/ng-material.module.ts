@@ -30,6 +30,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MatFormFieldModule,
     FormsModule,
     ReactiveFormsModule
-  ]
+  ],
+  entryComponents: [ModalComponent],
 })
 export class NgMaterialModule { }

@@ -3,9 +3,13 @@
     <div class="row">
       <div class="col"><h2 class="mb-5">Table</h2></div>
       <div class="col">
-        <button mat-raised-button color="primary" (click)="openDialog()">Add user</button>
+        <button *ngIf="addUserButton" mat-raised-button color="primary" (click)="openDialog()">Add user</button>
       
     </div>
+
+    <ul  *ngFor="let profile of (profiles$ | async)">
+      <li>{{ profile.id }}</li>
+    </ul>
 
    
 
@@ -19,11 +23,11 @@
           </tr>
         </thead>
         <tbody>
-          <tr scope="row">
-            <th scope="row">1</th>
-            <td class="">James Yates</td>
+          <tr scope="row" *ngFor="let profile of profiles ">
+            <th scope="row">{{ profile.id }}</th>
+            <td class="">{{ profile.firstName }} {{ profile.lastName }}</td>
             <td>
-              <mat-slide-toggle></mat-slide-toggle>
+              <mat-slide-toggle  (change)="onChange($event, profile.id)" [checked]="profile.active"></mat-slide-toggle>
             </td>
           </tr>
           <tr scope="row">

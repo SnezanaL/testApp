@@ -6,6 +6,8 @@ import { NgMaterialModule } from './ng-material/ng-material.module';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
+import { AkitaNgDevtools } from '@datorama/akita-ngdevtools';
+//import { environment } from 'environments/environment';
 
 @NgModule({
   declarations: [
@@ -16,7 +18,8 @@ import { AppComponent } from './app.component';
     BrowserAnimationsModule,
     FormsModule,
     NgMaterialModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    AkitaNgDevtools.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent],
